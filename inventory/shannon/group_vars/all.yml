@@ -1,7 +1,7 @@
 ---
 k3s_version: v1.29.2+k3s1
 # this is the user that has ssh access to these machines
-ansible_user: "{{ remote_user }}"
+ansible_user: "operon"
 systemd_dir: /etc/systemd/system
 
 # Set your timezone
@@ -14,17 +14,14 @@ flannel_iface: "enp1s0f0"
 cilium_bgp: false
 
 # apiserver_endpoint is virtual ip-address which will be configured on each master
-apiserver_endpoint: "192.168.0.201" # CHANGED
+apiserver_endpoint: "192.168.0.200"
 
 # k3s_token is required  masters can talk together securely
 # this token should be alpha numeric only
-# omitted as k3s_token is stored in ./inventory/shannon/group_vars/vault.yml
-# k3s_token: "some-SUPER-DEDEUPER-secret-password"
-
+# k3s_token is stored in ./inventory/shannon/group_vars/vault.yml
 
 # The IP on which the node is reachable in the cluster.
 k3s_node_ip: "{{ ansible_facts[(cilium_iface | default(calico_iface | default(flannel_iface)))]['ipv4']['address'] }}"
-# k3s_node_ip: "192.168.0.201" # CHANGED
 
 # Disable the taint manually by setting: k3s_master_taint = false
 k3s_master_taint: "{{ true if groups['node'] | default([]) | length >= 1 else false }}"
@@ -69,16 +66,4 @@ metal_lb_controller_tag_version: "v0.14.3"
 metal_lb_ip_range: "192.168.0.130-192.168.0.140"
 
 proxmox_lxc_configure: false
-# the user that you would use to ssh into the host, for example if you run ssh some-user@my-proxmox-host,
-# set this value to some-user
-proxmox_lxc_ssh_user: root
-# the unique proxmox ids for all of the containers in the cluster, both worker and master nodes
-proxmox_lxc_ct_ids:
-  - 200
-  - 201
-  - 202
-  - 203
-  - 204
-
-#
 custom_registries: false
