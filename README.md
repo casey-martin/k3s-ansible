@@ -12,19 +12,6 @@ If you want more context on how this works, see:
 
 📺 [Watch the Video](https://www.youtube.com/watch?v=CbkEWcUZ7zM)
 
-## 📖 k3s Ansible Playbook
-
-Build a Kubernetes cluster using Ansible with k3s. The goal is easily install a HA Kubernetes cluster on machines running:
-
-- [x] Debian (tested on version 11)
-- [x] Ubuntu (tested on version 22.04)
-- [x] Rocky (tested on version 9)
-
-on processor architecture:
-
-- [X] x64
-- [X] arm64
-- [X] armhf
 
 ## ✅ System requirements
 
@@ -36,9 +23,9 @@ on processor architecture:
 
 - `server` and `agent` nodes should have passwordless SSH access, if not you can supply arguments to provide credentials `--ask-pass --ask-become-pass` to each command.
 
-## 🚀 Getting Started
+## Host & Network Information
 
-### 🍴 Preparation
+### 🍴 Network Information
 
 First create a new directory based on the `sample` directory within the `inventory` directory:
 
