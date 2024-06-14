@@ -1,0 +1,41 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Generate SSH key pair on each host (if not already present)
+      command: ssh-keygen -t rsa -b 2048 -f /home/{{ ansible_user }}/.ssh/id_rsa -q -N ""
+      args:
+        creates: /home/{{ ansible_user }}/.ssh/id_rsa
+      changed_when: false
+
+    - name: Ensure correct permissions for the SSH key
+      file:
+        path: /home/{{ ansible_user }}/.ssh/id_rsa
+        mode: 0600
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Ensure correct permissions for the .ssh directory
+      file:
+        path: /home/{{ ansible_user }}/.ssh
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        state: directory
+
+    - name: Fetch public key from each host
+      fetch:
+        src: /home/{{ ansible_user }}/.ssh/id_rsa.pub
+        dest: /tmp/keys/{{ inventory_hostname }}.pub
+        flat: yes
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Copy SSH key to all other hosts
+      authorized_key:
+        user: "{{ ansible_user }}"
+        key: "{{ lookup('file', '/tmp/keys/' + item + '.pub') }}"
+        state: present
+      with_items: "{{ groups['all'] }}"
+      when: inventory_hostname != item
